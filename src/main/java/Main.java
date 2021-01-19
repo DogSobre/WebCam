@@ -4,17 +4,12 @@ import java.io.File;
 import java.io.IOException;
 
 public class Main {
-    public static void main(String[]agrv){
+    public static void main(String[] agrv) {
         System.out.println("Hello Wolrd");
-        BufferedImage img = null;
+        String[] pathList = {"inception5h/tensorPics/jack.jpg", "inception5h/tensorPics/jack.jpg"};
+        Images images = new Images();
+        images.addImages(pathList);
+        System.out.println(images);
 
-        try
-        {
-            img = ImageIO.read(new File("C:/ImageTest/pic2.jpg")); // eventually C:\\ImageTest\\pic2.jpg
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
     }
 }

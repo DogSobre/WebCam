@@ -9,6 +9,7 @@ public class Image {
 
 
     private String filePath;
+    private byte[] byteImage;
 
     public Image(String filePath) {
         this.filePath = filePath;
@@ -18,16 +19,26 @@ public class Image {
         return filePath;
     }
 
-    public byte[] imageToByte() throws IOException {
+
+    public byte[] getByteImage() {
+        return byteImage;
+    }
+
+
+    public void imageToByte() {
         // open image
         File imgPath = new File(this.getFilePath());
-        BufferedImage bufferedImage = ImageIO.read(imgPath);
+        try {
+            BufferedImage bufferedImage = ImageIO.read(imgPath);
+            // get DataBufferBytes from Raster
+            WritableRaster raster = bufferedImage.getRaster();
+            DataBufferByte data = (DataBufferByte) raster.getDataBuffer();
 
-        // get DataBufferBytes from Raster
-        WritableRaster raster = bufferedImage.getRaster();
-        DataBufferByte data = (DataBufferByte) raster.getDataBuffer();
+            this.byteImage = (data.getData());
 
-        return (data.getData());
+        } catch (IOException e) {
+            System.out.println(e);
+        }
 
     }
 }
