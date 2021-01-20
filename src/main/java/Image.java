@@ -25,6 +25,8 @@ public class Image implements MyFile {
 
     private HashMap mapValDescription;
     private HashMap mapPathDescription;
+    private Integer maxPercent;
+    private String description;
 
     public Image(String filePath) {
         tfUtils = new TFUtils();
