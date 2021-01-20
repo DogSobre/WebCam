@@ -40,6 +40,7 @@ public class TFUtils {
      * @return
      */
     Tensor byteBufferToTensor(byte[] imageBytes) {
+
         try (Graph g = new Graph()) {
             GraphBuilder graphBuilder = new GraphBuilder(g);
             // Some constants specific to the pre-trained model at:

@@ -1,16 +1,12 @@
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import org.tensorflow.Tensor;
 
 public class Main {
     public static void main(String[] agrv) {
-        System.out.println("Hello Wolrd");
+        TFUtils tfUtils = new TFUtils();
+        DbRow dbRow = new DbRow("inception5h/tensorflow_inception_graph.pb");
         String[] pathList = {"inception5h/tensorPics/keyboard.jpg", "inception5h/tensorPics/mouse.jpg", "inception5h/tensorPics/retriever.jpg", "inception5h/tensorPics/suncokret.jpg"};
-        Images images = new Images();
-
-        images.addImages(pathList);
-        images.generateTensorImages();
-        System.out.println(images.getImages());
+        Image img = new Image("inception5h/tensorPics/keyboard.jpg");
+        Tensor tensor = tfUtils.executeModelFromByteArray(dbRow.getDbByte(), img.getImageTensor());
+        System.out.println(tensor);
     }
 }
