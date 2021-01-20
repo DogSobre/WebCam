@@ -43,38 +43,27 @@ public class TFUtils {
     }
 
 
-    HashMap fetchDescriptionAndValue(Tensor out) {
+    Integer fetchPercent(Tensor out) {
         float[][] copy = tensorToArray(out);
         Integer ELEM_RETURN = 1008;
-        String[] descriptions = null;
-        HashMap hm = new HashMap();
-        Integer key = 0;
+        Integer percent = null;
         Float value = new Float(0.0);
         for (int i = 0; i < ELEM_RETURN; i++) {
             if (i == 0) {
-                key = i;
                 value = copy[0][i];
             } else if (copy[0][i] > value) {
-                key = i;
                 value = copy[0][i];
             }
         }
-        try {
-            descriptions = convertFileToArray("inception5h/labels.txt");
-            Integer percent = Math.round(value * 100);
-            hm.put(descriptions[key], percent);
-        } catch (IOException e) {
-            System.out.println(e);
-        }
-        return hm;
+        percent = Math.round(value * 100);
+        return percent;
     }
 
 
-    HashMap fetchDescriptionAndPath(Tensor out, String pathName) {
+    String fetchDescription(Tensor out, String pathName) {
         float[][] copy = tensorToArray(out);
         Integer ELEM_RETURN = 1008;
         String[] descriptions = null;
-        HashMap hm = new HashMap();
         Integer key = 0;
         Float value = new Float(0.0);
         for (int i = 0; i < ELEM_RETURN; i++) {
@@ -88,11 +77,10 @@ public class TFUtils {
         }
         try {
             descriptions = convertFileToArray("inception5h/labels.txt");
-            hm.put(descriptions[key], pathName);
         } catch (IOException e) {
             System.out.println(e);
         }
-        return hm;
+        return descriptions[key];
     }
 
     public String[] convertFileToArray(String path) throws IOException {
