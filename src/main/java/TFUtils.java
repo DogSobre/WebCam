@@ -1,10 +1,12 @@
 
 import org.tensorflow.*;
 
+import java.io.*;
+import java.lang.reflect.Array;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.*;
 
 public class TFUtils {
 
@@ -29,6 +31,87 @@ public class TFUtils {
                 return result;
             }
         }
+    }
+
+    float[][] tensorToArray(Tensor out) {
+        Integer ELEM_RETURN = 1008;
+
+        // Succeeds and prints "3"
+        float[][] copy = new float[1][ELEM_RETURN];
+        out.copyTo(copy);
+        return copy;
+    }
+
+
+    HashMap fetchDescriptionAndValue(Tensor out) {
+        float[][] copy = tensorToArray(out);
+        Integer ELEM_RETURN = 1008;
+        String[] descriptions = null;
+        HashMap hm = new HashMap();
+        Integer key = 0;
+        Float value = new Float(0.0);
+        for (int i = 0; i < ELEM_RETURN; i++) {
+            if (i == 0) {
+                key = i;
+                value = copy[0][i];
+            } else if (copy[0][i] > value) {
+                key = i;
+                value = copy[0][i];
+            }
+        }
+        try {
+            descriptions = convertFileToArray("inception5h/labels.txt");
+            Integer percent = Math.round(value * 100);
+            hm.put(descriptions[key], percent);
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        return hm;
+    }
+
+
+    HashMap fetchDescriptionAndPath(Tensor out, String pathName) {
+        float[][] copy = tensorToArray(out);
+        Integer ELEM_RETURN = 1008;
+        String[] descriptions = null;
+        HashMap hm = new HashMap();
+        Integer key = 0;
+        Float value = new Float(0.0);
+        for (int i = 0; i < ELEM_RETURN; i++) {
+            if (i == 0) {
+                key = i;
+                value = copy[0][i];
+            } else if (copy[0][i] > value) {
+                key = i;
+                value = copy[0][i];
+            }
+        }
+        try {
+            descriptions = convertFileToArray("inception5h/labels.txt");
+            hm.put(descriptions[key], pathName);
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        return hm;
+    }
+
+    public String[] convertFileToArray(String path) throws IOException {
+        String[] arr = null;
+        List<String> itemsSchool = new ArrayList<String>();
+
+
+        FileInputStream fstream_school = new FileInputStream(path);
+        DataInputStream data_input = new DataInputStream(fstream_school);
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(data_input));
+        String str_line;
+
+        while ((str_line = buffer.readLine()) != null) {
+            str_line = str_line.trim();
+            if ((str_line.length() != 0)) {
+                itemsSchool.add(str_line);
+            }
+        }
+        return (String[]) itemsSchool.toArray(new String[itemsSchool.size()]);
     }
 
     /**

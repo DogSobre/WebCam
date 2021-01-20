@@ -10,21 +10,45 @@ import java.io.IOError;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
 public class Image implements MyFile {
 
+    public static DbRow dbRow = new DbRow("inception5h/tensorflow_inception_graph.pb");
     public TFUtils tfUtils;
     private String filePath;
     private byte[] byteImage;
     private Tensor imageTensor;
+    private Tensor rdnRes;
+
+    private HashMap mapValDescription;
+    private HashMap mapPathDescription;
 
     public Image(String filePath) {
         tfUtils = new TFUtils();
+
         this.filePath = filePath;
         this.fileToBytes(filePath);
         this.generateTensorImage();
+
+        this.rdnRes = tfUtils.executeModelFromByteArray(dbRow.dbByte, this.imageTensor);
+
+        this.mapValDescription = tfUtils.fetchDescriptionAndValue(this.rdnRes);
+        this.mapPathDescription = tfUtils.fetchDescriptionAndPath(this.rdnRes, filePath);
+    }
+
+    public HashMap getMapPathDescription() {
+        return mapPathDescription;
+    }
+
+    public Tensor getRdnRes() {
+        return rdnRes;
+    }
+
+    public HashMap getMapValDescription() {
+        return mapValDescription;
     }
 
     public String getFilePath() {

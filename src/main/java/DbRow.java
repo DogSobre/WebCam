@@ -3,8 +3,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 public class DbRow implements MyFile {
-    private String dbPath;
-    private byte[] dbByte;
+    public String dbPath;
+    public byte[] dbByte;
 
 
     public DbRow(String dbPath) {
@@ -16,9 +16,6 @@ public class DbRow implements MyFile {
         return dbPath;
     }
 
-    public byte[] getDbByte() {
-        return dbByte;
-    }
 
     public void fileToBytes(String path) {
         try {
