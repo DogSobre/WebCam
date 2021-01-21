@@ -15,6 +15,7 @@ import org.apache.commons.io.FileUtils;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class ImagesApp extends Application {
     private Integer percentCondion = MIN_PERCENT;
     private List<String> descriptionsCondition = new ArrayList<>();
     private File folderToSave = null;
+    //new File(String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads")) );
     private Integer timeVideoInS = 10;
 
     @Override
@@ -83,8 +85,8 @@ public class ImagesApp extends Application {
             StackPane imagesCharged = new StackPane();
             imagesCharged.getChildren().add(vBox);
             // create a scene specifying the root and the size
-            Scene imagesChargedScene = new Scene(imagesCharged, 1000, 800);
-            imageChargedStage.setTitle("Home");
+            Scene imagesChargedScene = new Scene(imagesCharged, 300, 300);
+            imageChargedStage.setTitle("Selected images analysed");
             // add scene to the stage
             imageChargedStage.setScene(imagesChargedScene);
 
@@ -94,7 +96,7 @@ public class ImagesApp extends Application {
 
         loadWebCam.setOnAction(a -> {
             setTimeInS(timeInSTextField2.getText());
-            WebcamCapture gs = new WebcamCapture(this.timeVideoInS, this.folderToSave.getPath());
+            WebcamCapture gs = new WebcamCapture(this.timeVideoInS, this.folderToSave != null ? this.folderToSave.getPath() : String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads")));
             Thread th = new Thread(gs);
             th.start();
         });
@@ -150,6 +152,7 @@ public class ImagesApp extends Application {
     }
 
     public void setFolderToSave(File folderToSave) {
+        System.out.println(folderToSave);
         this.folderToSave = folderToSave;
     }
 
@@ -184,42 +187,64 @@ public class ImagesApp extends Application {
 
     public void selecImageToSave(List<MyImage> img) {
         for (int i = 0; i < img.size(); i++) {
-            try {
-                MyImage myImage = img.get(i);
-                Boolean ifDescInArray = this.descriptionsCondition.contains(myImage.getDescription().replaceAll("\\s+", ""));
-                if (this.percentCondion < myImage.getMaxPercent()) {
-                    if (this.descriptionsCondition.size() == 0)
-                        this.saveFileAs(myImage);
-                    else if (ifDescInArray)
-                        this.saveFileAs(myImage);
-                }
-            } catch (IOException e) {
-                System.out.println(e);
+
+            MyImage myImage = img.get(i);
+            Boolean ifDescInArray = this.descriptionsCondition.contains(myImage.getDescription().replaceAll("\\s+", ""));
+            if (this.percentCondion < myImage.getMaxPercent()) {
+                if (this.descriptionsCondition.size() == 0)
+                    this.saveFileAs(myImage);
+                else if (ifDescInArray)
+                    this.saveFileAs(myImage);
             }
+
         }
     }
 
     public void createButtonsByImage(List<MyImage> img, VBox vBox) {
         for (int i = 0; i < img.size(); i++) {
-            Button b = new Button(img.get(i).getDescription());
+            Button b = new Button(img.get(i).getDescription() + " : " + img.get(i).getMaxPercent() + "%");
             Integer index = i;
             b.setOnAction(a -> {
-                createNewAlertWithImageDescr(img.get(index).getFilePath(), img.get(index).getDescription());
+                createNewAlertWithImageDescr(img.get(index).getFilePath(), img.get(index).getDescription() + " : " + img.get(index).getMaxPercent() + "%");
             });
             vBox.getChildren().add(b);
         }
     }
 
-    public void saveFileAs(MyImage myImage) throws IOException {
-        String filePath = this.folderToSave.getPath() + "/" + myImage.getFileName();
-        BufferedImage bImage = ImageIO.read(new File(myImage.getFilePath()));
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ImageIO.write(bImage, "jpg", bos);
-        byte[] data = bos.toByteArray();
-        ByteArrayInputStream bis = new ByteArrayInputStream(data);
-        BufferedImage bImage2 = ImageIO.read(bis);
-        ImageIO.write(bImage2, "jpg", new File(filePath));
-        System.out.println("image " + myImage.getFileName() + " created as :" + filePath);
+   /* public void saveFileAs(MyImage myImage) {
+        try {
+            String filePath = this.folderToSave != null ? this.folderToSave.getPath() + "/" + myImage.getFileName() : String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads") + "/" + myImage.getFileName());
+            BufferedImage bImage = ImageIO.read(new File(myImage.getFilePath()));
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ImageIO.write(bImage, "jpg", bos);
+            byte[] data = bos.toByteArray();
+            ByteArrayInputStream bis = new ByteArrayInputStream(data);
+            BufferedImage bImage2 = ImageIO.read(bis);
+            ImageIO.write(bImage2, "jpg", new File(filePath));
+            System.out.println("image " + myImage.getFileName() + " created as :" + filePath);
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }*/
+
+    private void saveFileAs(MyImage myImage) {
+        try {
+            String destinationFile = this.folderToSave != null ? this.folderToSave.getPath() + "/" + myImage.getFileName() : String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads") + "/" + myImage.getFileName());
+            URL url = new URL(myImage.getFilePath());
+            InputStream is = url.openStream();
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(destinationFile)));
+
+            byte[] b = new byte[2048];
+            int length;
+
+            while ((length = is.read(b)) != -1) {
+                bos.write(b, 0, length);
+            }
+
+            is.close();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
     }
 
     public void createNewAlertWithImageDescr(String path, String desc) {
@@ -254,7 +279,7 @@ public class ImagesApp extends Application {
 
 
             //Creating a scene object
-            Scene scene = new Scene(sp, 100, 800);
+            Scene scene = new Scene(sp, 800, 800);
 
             //Setting title to the Stage
             newWindow.setTitle(path);
@@ -273,7 +298,7 @@ public class ImagesApp extends Application {
     public File chooseSpecificFolder(Stage primaryStage) {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle("Choose folder with JPG");
-        File defaultDirectory = new File(System.getProperty("user.home"));
+        File defaultDirectory = new File(String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads")));
         chooser.setInitialDirectory(defaultDirectory);
         File selectedDirectory = chooser.showDialog(primaryStage);
         return selectedDirectory;
