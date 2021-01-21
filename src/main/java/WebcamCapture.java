@@ -64,6 +64,11 @@ public class WebcamCapture implements Runnable {
                 canvas.showImage(converter.convert(img));
                 System.out.println(this.INTERVAL);
                 Thread.sleep(this.INTERVAL);
+
+                Filter filter = new Filter();
+                img.setEffect(lighting);
+
+
             }
         } catch (Exception e) {
             e.printStackTrace();
