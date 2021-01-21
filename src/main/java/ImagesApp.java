@@ -23,11 +23,16 @@ public class ImagesApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         VBox vBox = new VBox();
+        VBox rootVbow = new VBox();
+        rootVbow.setLayoutX(50);
+        rootVbow.setLayoutY(50);
         // the root of the scene shown in the main window
         StackPane root = new StackPane();
 
         // create a button with specified text
         Button loadFoler = new Button("Load new folder images'");
+        Button loadWebCam = new Button("Load with webcam'");
+
         // set a handler that is executed when the user activates the button
         // e.g. by clicking it or pressing enter while it's focused
         loadFoler.setOnAction(e -> {
@@ -38,8 +43,17 @@ public class ImagesApp extends Application {
 
         });
 
+        loadWebCam.setOnAction(a -> {
+            WebcamCapture gs = new WebcamCapture();
+            Thread th = new Thread(gs);
+            th.start();
+        });
+
         // add button as child of the root
-        root.getChildren().add(loadFoler);
+        rootVbow.getChildren().add(loadFoler);
+        rootVbow.getChildren().add(loadWebCam);
+        // add button as child of the root
+        root.getChildren().add(rootVbow);
         // create a scene specifying the root and the size
         Scene scene = new Scene(root, 500, 300);
         primaryStage.setTitle("Home");
@@ -66,6 +80,18 @@ public class ImagesApp extends Application {
         return myImages;
     }
 
+    public void createButtonsByImage(List<MyImage> img, VBox vBox) {
+        for (int i = 0; i < img.size(); i++) {
+            Button b = new Button(img.get(i).getDescription());
+            Integer index = i;
+            b.setOnAction(a -> {
+                createNewAlertWithImageDescr(img.get(index).getFilePath(), img.get(index).getDescription());
+            });
+            vBox.getChildren().add(b);
+        }
+    }
+
+
     public void createNewAlertWithImageDescr(String path, String desc) {
         try {
             Image image = new Image(new FileInputStream(path));
@@ -82,7 +108,6 @@ public class ImagesApp extends Application {
             ScrollPane sp = new ScrollPane();
             Label secondLabel = new Label(desc);
             StackPane secondaryLayout = new StackPane();
-
 
 
             secondaryLayout.getChildren().add(secondLabel);
@@ -113,18 +138,6 @@ public class ImagesApp extends Application {
         }
     }
 
-    public void createButtonsByImage(List<MyImage> img, VBox vBox) {
-        for (int i = 0; i < img.size(); i++) {
-            Button b = new Button(img.get(i).getDescription());
-            Integer index = i;
-            b.setOnAction(a -> {
-                createNewAlertWithImageDescr(img.get(index).getFilePath(), img.get(index).getDescription());
-            });
-            vBox.getChildren().add(b);
-        }
-
-
-    }
 
     public File chooseSpecificFolder(Stage primaryStage) {
         DirectoryChooser chooser = new DirectoryChooser();

@@ -30,13 +30,10 @@ public class MyImage implements MyFile {
         this.rdnRes = tfUtils.executeModelFromByteArray(dbRow.dbByte, this.imageTensor);
 
         this.maxPercent = tfUtils.fetchPercent(this.rdnRes);
-        this.description = tfUtils.fetchDescription(this.rdnRes, filePath);
+        this.description = tfUtils.fetchDescription(this.rdnRes);
 
     }
 
-    public HashMap getMapPathDescription() {
-        return mapPathDescription;
-    }
 
     public Integer getMaxPercent() {
         return maxPercent;
@@ -51,9 +48,6 @@ public class MyImage implements MyFile {
         return description;
     }
 
-    public HashMap getMapValDescription() {
-        return mapValDescription;
-    }
 
     public String getFilePath() {
         return filePath;

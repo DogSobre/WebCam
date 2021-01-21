@@ -60,7 +60,7 @@ public class TFUtils {
     }
 
 
-    String fetchDescription(Tensor out, String pathName) {
+    String fetchDescription(Tensor out) {
         float[][] copy = tensorToArray(out);
         Integer ELEM_RETURN = 1008;
         String[] descriptions = null;
