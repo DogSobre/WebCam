@@ -3,6 +3,12 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -13,6 +19,7 @@ import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
@@ -161,6 +168,8 @@ public class ImagesApp extends Application {
         List<MyImage> myImages = new ArrayList<>();
         for (int i = 0; i < listOfFiles.length; i++) {
 
+            if (listOfFiles[i].getName().contains(".jpg"))
+
             if (listOfFiles[i].isFile()) {
                 MyImage myImage = new MyImage(folder + "/", listOfFiles[i].getName());
 
@@ -258,6 +267,7 @@ public class ImagesApp extends Application {
             //setting the fit height and width of the image view
             imageView.setFitHeight(455);
             imageView.setFitWidth(500);
+            imageView.setEffect(filterColor(Color.green));
 
 
 // Items
@@ -302,5 +312,14 @@ public class ImagesApp extends Application {
         chooser.setInitialDirectory(defaultDirectory);
         File selectedDirectory = chooser.showDialog(primaryStage);
         return selectedDirectory;
+    }
+    public Lighting filterColor(Color color) {
+        Lighting lighting = new Lighting();
+        lighting.setDiffuseConstant(1.0);
+        lighting.setSpecularConstant(0.0);
+        lighting.setSpecularExponent(0.0);
+        lighting.setSurfaceScale(0.0);lighting.setLight(new Light.Distant(45, 45, javafx.scene.paint.Color.GREEN));
+
+        return lighting;
     }
 }
