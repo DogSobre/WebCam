@@ -19,11 +19,15 @@ public class MyImage implements MyFile {
     private HashMap mapPathDescription;
     private Integer maxPercent;
     private String description;
+    private String fileName;
+    private String folder;
 
-    public MyImage(String filePath) {
+    public MyImage(String folder, String fileName) {
         tfUtils = new TFUtils();
 
-        this.filePath = filePath;
+        this.filePath = folder + fileName;
+        this.fileName = fileName;
+        this.folder = folder;
         this.fileToBytes(filePath);
         this.generateTensorImage();
 
@@ -34,6 +38,13 @@ public class MyImage implements MyFile {
 
     }
 
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
 
     public Integer getMaxPercent() {
         return maxPercent;

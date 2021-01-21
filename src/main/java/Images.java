@@ -22,7 +22,6 @@ public class Images {
             this.addMapPathDescription(myImages.get(i).getFilePath(), myImages.get(i).getDescription());
             this.addMapValDescription(myImages.get(i).getMaxPercent(), myImages.get(i).getDescription());
         }
-        System.out.println(this.mapPathDescription);
         this.myImages = myImages;
     }
 
