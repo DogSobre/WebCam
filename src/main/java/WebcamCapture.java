@@ -11,7 +11,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
-import static org.bytedeco.opencv.global.opencv_core.cvFlip;
+import static org.bytedeco.opencv.global.opencv_core.*;
 import static org.bytedeco.opencv.helper.opencv_imgcodecs.cvSaveImage;
 
 public class WebcamCapture implements Runnable {

@@ -2,6 +2,11 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -9,6 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -103,6 +109,7 @@ public class ImagesApp extends Application {
             //setting the fit height and width of the image view
             imageView.setFitHeight(455);
             imageView.setFitWidth(500);
+            imageView.setEffect(filterColor(Color.green));
 
 // Items
             ScrollPane sp = new ScrollPane();
@@ -147,4 +154,14 @@ public class ImagesApp extends Application {
         File selectedDirectory = chooser.showDialog(primaryStage);
         return selectedDirectory;
     }
+    public Lighting filterColor(Color color) {
+        Lighting lighting = new Lighting();
+        lighting.setDiffuseConstant(1.0);
+        lighting.setSpecularConstant(0.0);
+        lighting.setSpecularExponent(0.0);
+        lighting.setSurfaceScale(0.0);lighting.setLight(new Light.Distant(45, 45, javafx.scene.paint.Color.GREEN));
+
+        return lighting;
+    }
+
 }
