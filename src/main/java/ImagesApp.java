@@ -1,12 +1,10 @@
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
@@ -14,12 +12,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
@@ -39,6 +37,8 @@ public class ImagesApp extends Application {
     private File folderToSave = null;
     //new File(String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads")) );
     private Integer timeVideoInS = 10;
+    final ColorPicker colorPicker = new ColorPicker();
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -267,7 +267,7 @@ public class ImagesApp extends Application {
             //setting the fit height and width of the image view
             imageView.setFitHeight(455);
             imageView.setFitWidth(500);
-            imageView.setEffect(filterColor(Color.green));
+            imageView.setEffect(filterColor(Color.GREEN));
 
 
 // Items
@@ -286,6 +286,14 @@ public class ImagesApp extends Application {
 
             // New window (Stage)
             Stage newWindow = new Stage();
+            colorPicker.setOnAction(new EventHandler() {
+                public void handle(Event t) {
+                    Color c = colorPicker.getValue();
+                }
+            });
+
+            colorPicker.setLayoutX(600);
+            colorPicker.setLayoutY(600);
 
 
             //Creating a scene object
@@ -296,6 +304,7 @@ public class ImagesApp extends Application {
 
             //Adding scene to the stage
             newWindow.setScene(scene);
+            root.getChildren().add(colorPicker);
 
             //Displaying the contents of the stage
             newWindow.show();
