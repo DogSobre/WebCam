@@ -33,7 +33,7 @@ public class ImagesApp extends Application {
         loadFoler.setOnAction(e -> {
             File choosedFolder = chooseSpecificFolder(primaryStage);
             images.setImages(loadAllFilesJPGFromDirectory(choosedFolder));
-            this.createButtonsByImage(primaryStage, images.getImages(), vBox);
+            this.createButtonsByImage(images.getImages(), vBox);
             root.getChildren().add(vBox);
 
         });
@@ -66,7 +66,7 @@ public class ImagesApp extends Application {
         return myImages;
     }
 
-    public void createNewAlertWithImageDescr(Stage primaryStage, String path, String desc) {
+    public void createNewAlertWithImageDescr(String path, String desc) {
         try {
             Image image = new Image(new FileInputStream(path));
             ImageView imageView = new ImageView(image);
@@ -78,25 +78,20 @@ public class ImagesApp extends Application {
             imageView.setFitHeight(455);
             imageView.setFitWidth(500);
 
-
+// Items
             ScrollPane sp = new ScrollPane();
-
-
             Label secondLabel = new Label(desc);
-
             StackPane secondaryLayout = new StackPane();
+
+
 
             secondaryLayout.getChildren().add(secondLabel);
 
-
             //Creating a Group object
             Group root = new Group(imageView);
-
             root.getChildren().add(secondaryLayout);
 
-
             sp.setContent(root);
-
 
             // New window (Stage)
             Stage newWindow = new Stage();
@@ -118,12 +113,12 @@ public class ImagesApp extends Application {
         }
     }
 
-    public void createButtonsByImage(Stage primaryStage, List<MyImage> img, VBox vBox) {
+    public void createButtonsByImage(List<MyImage> img, VBox vBox) {
         for (int i = 0; i < img.size(); i++) {
             Button b = new Button(img.get(i).getDescription());
             Integer index = i;
             b.setOnAction(a -> {
-                createNewAlertWithImageDescr(primaryStage, img.get(index).getFilePath(), img.get(index).getDescription());
+                createNewAlertWithImageDescr(img.get(index).getFilePath(), img.get(index).getDescription());
             });
             vBox.getChildren().add(b);
         }
