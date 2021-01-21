@@ -6,4 +6,5 @@ public class Main {
     public static void main(String[] agrv) throws Exception {
         Application.launch(ImagesApp.class, agrv);
     }
+
 }

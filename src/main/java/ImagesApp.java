@@ -30,8 +30,8 @@ public class ImagesApp extends Application {
         StackPane root = new StackPane();
 
         // create a button with specified text
-        Button loadFoler = new Button("Load new folder images'");
-        Button loadWebCam = new Button("Load with webcam'");
+        Button loadFoler = new Button("Load new folder images");
+        Button loadWebCam = new Button("Load with webcam");
 
         // set a handler that is executed when the user activates the button
         // e.g. by clicking it or pressing enter while it's focused
@@ -142,7 +142,7 @@ public class ImagesApp extends Application {
     public File chooseSpecificFolder(Stage primaryStage) {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle("Choose folder with JPG");
-        File defaultDirectory = new File("/home/francesco/Documents/codingFactory/javaAv/WebCam");
+        File defaultDirectory = new File("C:/Users/juanf/IdeaProjects/test/WebCam");
         chooser.setInitialDirectory(defaultDirectory);
         File selectedDirectory = chooser.showDialog(primaryStage);
         return selectedDirectory;
