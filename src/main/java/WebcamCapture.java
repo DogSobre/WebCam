@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import static org.bytedeco.opencv.global.opencv_core.cvFlip;
 import static org.bytedeco.opencv.helper.opencv_imgcodecs.cvSaveImage;
@@ -24,17 +25,14 @@ public class WebcamCapture implements Runnable {
     private Tensor rdnRes;
     private String pahToSave;
 
-    public WebcamCapture(Integer interval, String pahToSave) {
+    public WebcamCapture(Integer interval, String pathToSav) {
 
         this.INTERVAL = interval;
-        this.pahToSave = pahToSave;
+        this.pahToSave = pathToSav ;
         canvas.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
     }
 
     public void run() {
-
-        new File("imagies").mkdir();
-
         FrameGrabber grabber = new OpenCVFrameGrabber(0); // 1 for next camera
         OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
         IplImage img;
@@ -62,7 +60,6 @@ public class WebcamCapture implements Runnable {
                 cvSaveImage(this.pahToSave + "/" + File.separator + (i++) + "-aa.jpg", img);
                 canvas.setTitle(this.description + " " + this.maxPercent + "%");
                 canvas.showImage(converter.convert(img));
-                System.out.println(this.INTERVAL);
                 Thread.sleep(this.INTERVAL);
             }
         } catch (Exception e) {
