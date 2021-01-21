@@ -76,10 +76,20 @@ public class ImagesApp extends Application {
         // e.g. by clicking it or pressing enter while it's focused
         loadFoler.setOnAction(e -> {
             File choosedFolder = chooseSpecificFolder(primaryStage);
+            Stage imageChargedStage = new Stage();
             images.setImages(loadAllFilesJPGFromDirectory(choosedFolder));
             this.createButtonsByImage(images.getImages(), vBox);
             this.selecImageToSave(images.getImages());
-            root.getChildren().add(vBox);
+            StackPane imagesCharged = new StackPane();
+            imagesCharged.getChildren().add(vBox);
+            // create a scene specifying the root and the size
+            Scene imagesChargedScene = new Scene(imagesCharged, 1000, 800);
+            imageChargedStage.setTitle("Home");
+            // add scene to the stage
+            imageChargedStage.setScene(imagesChargedScene);
+
+            // make the stage visible
+            imageChargedStage.show();
         });
 
         loadWebCam.setOnAction(a -> {
@@ -103,7 +113,7 @@ public class ImagesApp extends Application {
         root.getChildren().add(rootVbow);
         // create a scene specifying the root and the size
         Scene scene = new Scene(root, 500, 300);
-        primaryStage.setTitle("Home");
+        primaryStage.setTitle("Images classified");
         // add scene to the stage
         primaryStage.setScene(scene);
 
@@ -131,6 +141,7 @@ public class ImagesApp extends Application {
 
     public void setDescriptionsCondition(String descriptionsCondition) {
         // Convert String Array to List
+        descriptionsCondition = descriptionsCondition.replaceAll("\\s+", "");
         this.descriptionsCondition = Arrays.asList(descriptionsCondition.split(","));
     }
 
@@ -173,15 +184,15 @@ public class ImagesApp extends Application {
 
     public void selecImageToSave(List<MyImage> img) {
         for (int i = 0; i < img.size(); i++) {
-
             try {
                 MyImage myImage = img.get(i);
-                Boolean ifDescInArray = this.descriptionsCondition.contains(myImage.getDescription());
-                if (this.percentCondion < myImage.getMaxPercent())
-                    if (this.descriptionsCondition == null)
+                Boolean ifDescInArray = this.descriptionsCondition.contains(myImage.getDescription().replaceAll("\\s+", ""));
+                if (this.percentCondion < myImage.getMaxPercent()) {
+                    if (this.descriptionsCondition.size() == 0)
                         this.saveFileAs(myImage);
                     else if (ifDescInArray)
                         this.saveFileAs(myImage);
+                }
             } catch (IOException e) {
                 System.out.println(e);
             }
@@ -243,7 +254,7 @@ public class ImagesApp extends Application {
 
 
             //Creating a scene object
-            Scene scene = new Scene(sp, 600, 400);
+            Scene scene = new Scene(sp, 100, 800);
 
             //Setting title to the Stage
             newWindow.setTitle(path);
