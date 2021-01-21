@@ -22,7 +22,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     compile group: 'org.tensorflow', name: 'tensorflow', version: '1.15.0'
     implementation group: 'org.bytedeco', name: 'javacv-platform', version: '1.5.4'
-
+    compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
 
 }
 

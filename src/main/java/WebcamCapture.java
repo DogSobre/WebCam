@@ -15,21 +15,25 @@ import static org.bytedeco.opencv.global.opencv_core.cvFlip;
 import static org.bytedeco.opencv.helper.opencv_imgcodecs.cvSaveImage;
 
 public class WebcamCapture implements Runnable {
-    final int INTERVAL = 100;///you may use interval
+    private Integer INTERVAL;///you may use interval
     CanvasFrame canvas = new CanvasFrame("Web Cam");
     private String description;
     private Integer maxPercent;
     private TFUtils tfUtils = new TFUtils();
     public static DbRow dbRow = new DbRow("inception5h/tensorflow_inception_graph.pb");
     private Tensor rdnRes;
+    private String pahToSave;
 
-    public WebcamCapture() {
+    public WebcamCapture(Integer interval, String pahToSave) {
+
+        this.INTERVAL = interval;
+        this.pahToSave = pahToSave;
         canvas.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
     }
 
     public void run() {
 
-        new File("webCamImages-in(s)").mkdir();
+        new File("imagies").mkdir();
 
         FrameGrabber grabber = new OpenCVFrameGrabber(0); // 1 for next camera
         OpenCVFrameConverter.ToIplImage converter = new OpenCVFrameConverter.ToIplImage();
@@ -54,11 +58,12 @@ public class WebcamCapture implements Runnable {
 
 
                 //save
-                // cvSaveImage("images" + File.separator + (i++) + "-aa.jpg", img);
+
+                cvSaveImage(this.pahToSave + "/" + File.separator + (i++) + "-aa.jpg", img);
                 canvas.setTitle(this.description + " " + this.maxPercent + "%");
                 canvas.showImage(converter.convert(img));
-
-                Thread.sleep(INTERVAL);
+                System.out.println(this.INTERVAL);
+                Thread.sleep(this.INTERVAL);
             }
         } catch (Exception e) {
             e.printStackTrace();
