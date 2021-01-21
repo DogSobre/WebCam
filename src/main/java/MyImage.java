@@ -1,20 +1,12 @@
 import org.tensorflow.Tensor;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.WritableRaster;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOError;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 
-public class Image implements MyFile {
+public class MyImage implements MyFile {
 
     public static DbRow dbRow = new DbRow("inception5h/tensorflow_inception_graph.pb");
     public TFUtils tfUtils;
@@ -28,7 +20,7 @@ public class Image implements MyFile {
     private Integer maxPercent;
     private String description;
 
-    public Image(String filePath) {
+    public MyImage(String filePath) {
         tfUtils = new TFUtils();
 
         this.filePath = filePath;
@@ -37,16 +29,26 @@ public class Image implements MyFile {
 
         this.rdnRes = tfUtils.executeModelFromByteArray(dbRow.dbByte, this.imageTensor);
 
-        this.mapValDescription = tfUtils.fetchDescriptionAndValue(this.rdnRes);
-        this.mapPathDescription = tfUtils.fetchDescriptionAndPath(this.rdnRes, filePath);
+        this.maxPercent = tfUtils.fetchPercent(this.rdnRes);
+        this.description = tfUtils.fetchDescription(this.rdnRes, filePath);
+
     }
 
     public HashMap getMapPathDescription() {
         return mapPathDescription;
     }
 
+    public Integer getMaxPercent() {
+        return maxPercent;
+    }
+
     public Tensor getRdnRes() {
         return rdnRes;
+    }
+
+
+    public String getDescription() {
+        return description;
     }
 
     public HashMap getMapValDescription() {
