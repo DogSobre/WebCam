@@ -44,10 +44,4 @@ public class WebcamCapture implements Runnable {
             e.printStackTrace();
         }
     }
-
-    public static void main(String[] args) {
-        WebcamCapture gs = new WebcamCapture();
-        Thread th = new Thread(gs);
-        th.start();
-    }
 }
