@@ -273,7 +273,7 @@ public class ImagesApp extends Application {
     public File chooseSpecificFolder(Stage primaryStage) {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle("Choose folder with JPG");
-        File defaultDirectory = new File("/home/francesco/Documents/codingFactory/javaAv/WebCam");
+        File defaultDirectory = new File(System.getProperty("user.home"));
         chooser.setInitialDirectory(defaultDirectory);
         File selectedDirectory = chooser.showDialog(primaryStage);
         return selectedDirectory;
