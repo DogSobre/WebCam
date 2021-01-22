@@ -121,7 +121,7 @@ public class ImagesApp extends Application {
 
         loadWebCam.setOnAction(a -> {
             setTimeInS(timeInSTextField2.getText());
-            WebcamCapture gs = new WebcamCapture(this.timeVideoInS*10, this.folderToSave != null ? this.folderToSave.getPath() : String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads")));
+            WebcamCapture gs = new WebcamCapture(this.timeVideoInS, this.folderToSave != null ? this.folderToSave.getPath() : String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads")));
             Thread th = new Thread(gs);
             th.start();
         });
@@ -282,6 +282,7 @@ public class ImagesApp extends Application {
     /**
      * @param path
      * @param desc
+     *
      */
     public void createNewAlertWithImageDescr(String path, String desc) {
         try {
@@ -395,6 +396,7 @@ public class ImagesApp extends Application {
      * @param bImage
      * @param path
      * @param desc
+     * 
      */
     public void writeBufferedImage(BufferedImage bImage, String path, String desc) {
         try {
@@ -408,6 +410,7 @@ public class ImagesApp extends Application {
     /**
      * @param originalImage
      * @param mask
+     * Create a filter in front of the picture
      * @return
      * @throws IOException
      */
@@ -428,6 +431,7 @@ public class ImagesApp extends Application {
     /**
      * @param imageView
      * @return
+     *
      */
     public BufferedImage imageViewToBufferedImage(ImageView imageView) {
         BufferedImage backImg = SwingFXUtils.fromFXImage(imageView.getImage(), null);
@@ -437,6 +441,7 @@ public class ImagesApp extends Application {
     /**
      * @param color
      * @return
+     * Changes the color of the image
      */
     public Lighting filterColor(Color color) {
         Lighting lighting = new Lighting();
