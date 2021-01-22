@@ -6,6 +6,9 @@ import java.nio.file.Files;
 import java.util.HashMap;
 
 
+/**
+ * This class contain the path of the Images and all informations of classified image (description, accuracy(percentage))
+ */
 public class MyImage implements MyFile {
 
     public static DbRow dbRow = new DbRow("inception5h/tensorflow_inception_graph.pb");
@@ -22,6 +25,12 @@ public class MyImage implements MyFile {
     private String fileName;
     private String folder;
 
+    /**
+     * @param folder
+     * @param fileName
+     * MyImage's constructor create the images with their path and give them a name
+     * This constructor classify the images and set values
+     */
     public MyImage(String folder, String fileName) {
         tfUtils = new TFUtils();
 
@@ -54,16 +63,13 @@ public class MyImage implements MyFile {
         return rdnRes;
     }
 
-
     public String getDescription() {
         return description;
     }
 
-
-    public String getFilePath() {
+    String getFilePath() {
         return filePath;
     }
-
 
     public byte[] getByteImage() {
         return byteImage;
@@ -73,12 +79,18 @@ public class MyImage implements MyFile {
         return imageTensor;
     }
 
-
+    /**
+     * This function takes a byte's image and generate his Tensor
+     */
     public void generateTensorImage() {
         byte[] imgByte = this.byteImage;
         this.imageTensor = tfUtils.byteBufferToTensor(imgByte);
     }
 
+    /**
+     * @param path
+     * The function catch the image with his path and convert him into a byte array
+     */
     @Override
     public void fileToBytes(String path) {
         try {

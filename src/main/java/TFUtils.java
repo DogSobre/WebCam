@@ -2,7 +2,6 @@
 import org.tensorflow.*;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,6 +32,10 @@ public class TFUtils {
         }
     }
 
+    /**
+     * @param out
+     * @return a two dimension float array
+     */
     float[][] tensorToArray(Tensor out) {
         Integer ELEM_RETURN = 1008;
 
@@ -43,6 +46,10 @@ public class TFUtils {
     }
 
 
+    /**
+     * @param out
+     * @return the maximum percentage given by the RDN
+     */
     Integer fetchPercent(Tensor out) {
         float[][] copy = tensorToArray(out);
         Integer ELEM_RETURN = 1008;
@@ -60,6 +67,11 @@ public class TFUtils {
     }
 
 
+    /**
+     * @param out
+     * @return the description with the most elevated percent returned by RDN
+     * The description has found thanks to the most elevated percent index in the LabelText folder
+     */
     String fetchDescription(Tensor out) {
         float[][] copy = tensorToArray(out);
         Integer ELEM_RETURN = 1008;

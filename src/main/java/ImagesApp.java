@@ -1,34 +1,38 @@
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
+
 import javafx.event.Event;
 import javafx.event.EventHandler;
+
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Light;
 import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+
 import org.apache.commons.io.FileUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.IntStream;
 
+/**
+ * ImageApp is the class who's managed the Application
+ */
 public class ImagesApp extends Application {
     public Integer MAX_PERCENT = 100;
     public Integer MIN_PERCENT = 0;
@@ -36,46 +40,54 @@ public class ImagesApp extends Application {
     private Integer percentCondion = MIN_PERCENT;
     private List<String> descriptionsCondition = new ArrayList<>();
     private File folderToSave = null;
+
     //new File(String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads")) );
     private Integer timeVideoInS = 10;
     final ColorPicker colorPicker = new ColorPicker();
     private Color colorFilterImage = null;
 
+    /**
+     * @param primaryStage
+     * @throws Exception
+     * That starts the main window of the Application
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
+
         VBox vBox = new VBox();
         VBox rootVbow = new VBox();
         rootVbow.setLayoutX(50);
         rootVbow.setLayoutY(50);
-        // the root of the scene shown in the main window
+        // The root of the scene shown in the main window
 
         StackPane root = new StackPane();
         String textOnSleectedFolder = this.folderToSave != null ? FileUtils.readFileToString(this.folderToSave, "UTF-8") : "Save as";
 
-        // create a button with specified text
+        // Create a button with specified text
         Button loadFoler = new Button("Load new folder images'");
         Button loadWebCam = new Button("Load with webcam'");
         Button folderToSave = new Button(textOnSleectedFolder);
 
-
+        // Choose the minimum percent the user wants to match with his image
         Label percentMinLabel = new Label("Percent minimum:");
         TextField percentTextField = new TextField();
         percentTextField.textProperty().addListener((observable, oldVal, newVal) -> {
             setPercentCondion(newVal);
         });
 
+        // Filter the images by description wrote by the user
         Label imageLabel = new Label("Label images separate by ',': ");
         TextField imageTextField1 = new TextField();
         imageTextField1.textProperty().addListener((observable, oldVal, newVal) -> {
             setDescriptionsCondition(newVal);
         });
 
+        // Take pictures from the webcam every x seconds (the variable x is the number of seconds between each image taken)
         Label timeInSLabel = new Label("Time in s for save image when recording video: ");
         TextField timeInSTextField2 = new TextField();
         timeInSTextField2.textProperty().addListener((observable, oldVal, newVal) -> {
             setTimeInS(newVal);
         });
-
 
         rootVbow.getChildren().addAll(percentMinLabel, percentTextField);
         rootVbow.setSpacing(10);
@@ -84,6 +96,7 @@ public class ImagesApp extends Application {
         rootVbow.getChildren().addAll(timeInSLabel, timeInSTextField2);
         rootVbow.setSpacing(10);
         rootVbow.getChildren().addAll(folderToSave);
+
         // set a handler that is executed when the user activates the button
         // e.g. by clicking it or pressing enter while it's focused
         loadFoler.setOnAction(e -> {
@@ -94,9 +107,11 @@ public class ImagesApp extends Application {
             this.selecImageToSave(images.getImages());
             StackPane imagesCharged = new StackPane();
             imagesCharged.getChildren().add(vBox);
+
             // create a scene specifying the root and the size
             Scene imagesChargedScene = new Scene(imagesCharged, 300, 300);
             imageChargedStage.setTitle("Selected images analysed");
+
             // add scene to the stage
             imageChargedStage.setScene(imagesChargedScene);
 
@@ -106,7 +121,7 @@ public class ImagesApp extends Application {
 
         loadWebCam.setOnAction(a -> {
             setTimeInS(timeInSTextField2.getText());
-            WebcamCapture gs = new WebcamCapture(this.timeVideoInS, this.folderToSave != null ? this.folderToSave.getPath() : String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads")));
+            WebcamCapture gs = new WebcamCapture(this.timeVideoInS*10, this.folderToSave != null ? this.folderToSave.getPath() : String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads")));
             Thread th = new Thread(gs);
             th.start();
         });
@@ -117,15 +132,17 @@ public class ImagesApp extends Application {
             folderToSave.setText(choosedFolder.getPath());
         });
 
-
         // add button as child of the root
         rootVbow.getChildren().add(loadFoler);
         rootVbow.getChildren().add(loadWebCam);
+
         // add button as child of the root
         root.getChildren().add(rootVbow);
+
         // create a scene specifying the root and the size
         Scene scene = new Scene(root, 500, 300);
         primaryStage.setTitle("Images classified");
+
         // add scene to the stage
         primaryStage.setScene(scene);
 
@@ -137,6 +154,10 @@ public class ImagesApp extends Application {
         return percentCondion;
     }
 
+    /**
+     * @param percentCondion
+     * This function set the condition for the function who's chosen the minimum percent to save the image
+     */
     public void setPercentCondion(String percentCondion) {
         Integer foo;
         try {
@@ -151,6 +172,10 @@ public class ImagesApp extends Application {
         return descriptionsCondition;
     }
 
+    /**
+     * @param descriptionsCondition
+     * This function set the condition for the function who's chosen the description, to save the image
+     */
     public void setDescriptionsCondition(String descriptionsCondition) {
         // Convert String Array to List
         descriptionsCondition = descriptionsCondition.replaceAll("\\s+", "");
@@ -161,44 +186,52 @@ public class ImagesApp extends Application {
         return folderToSave;
     }
 
+    /**
+     * @param folderToSave
+     * Select the
+     */
     public void setFolderToSave(File folderToSave) {
         this.folderToSave = folderToSave;
     }
 
+    /**
+     * @param folder
+     * The function allows to choose and open a image folder
+     * @return
+     */
     public List<MyImage> loadAllFilesJPGFromDirectory(File folder) {
         File[] listOfFiles = folder.listFiles();
         List<MyImage> myImages = new ArrayList<>();
         for (int i = 0; i < listOfFiles.length; i++) {
 
             if (listOfFiles[i].getName().contains(".jpg"))
-
                 if (listOfFiles[i].isFile()) {
                     MyImage myImage = new MyImage(folder + "/", listOfFiles[i].getName());
-
                     myImages.add(myImage);
-
                 } else if (listOfFiles[i].isDirectory()) {
                     System.out.println("Directory " + listOfFiles[i].getName());
                 }
-
-        }
-        return myImages;
+        } return myImages;
     }
 
+    /**
+     * @param time
+     */
     public void setTimeInS(String time) {
         Integer foo;
         try {
             foo = Integer.parseInt(time);
         } catch (NumberFormatException e) {
             foo = MAX_PERCENT;
-        }
-        this.timeVideoInS = foo;
+        } this.timeVideoInS = foo;
     }
 
-
+    /**
+     * @param img
+     *
+     */
     public void selecImageToSave(List<MyImage> img) {
         for (int i = 0; i < img.size(); i++) {
-
             MyImage myImage = img.get(i);
             Boolean ifDescInArray = this.descriptionsCondition.contains(myImage.getDescription().replaceAll("\\s+", ""));
             if (this.percentCondion < myImage.getMaxPercent()) {
@@ -207,10 +240,13 @@ public class ImagesApp extends Application {
                 else if (ifDescInArray)
                     this.saveFileAs(myImage);
             }
-
         }
     }
 
+    /**
+     * @param img
+     * @param vBox
+     */
     public void createButtonsByImage(List<MyImage> img, VBox vBox) {
         for (int i = 0; i < img.size(); i++) {
             Button b = new Button(img.get(i).getDescription() + " : " + img.get(i).getMaxPercent() + "%");
@@ -222,22 +258,9 @@ public class ImagesApp extends Application {
         }
     }
 
-   /* public void saveFileAs(MyImage myImage) {
-        try {
-            String filePath = this.folderToSave != null ? this.folderToSave.getPath() + "/" + myImage.getFileName() : String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads") + "/" + myImage.getFileName());
-            BufferedImage bImage = ImageIO.read(new File(myImage.getFilePath()));
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ImageIO.write(bImage, "jpg", bos);
-            byte[] data = bos.toByteArray();
-            ByteArrayInputStream bis = new ByteArrayInputStream(data);
-            BufferedImage bImage2 = ImageIO.read(bis);
-            ImageIO.write(bImage2, "jpg", new File(filePath));
-            System.out.println("image " + myImage.getFileName() + " created as :" + filePath);
-        } catch (IOException e) {
-            System.out.println(e);
-        }
-    }*/
-
+    /**
+     * @param myImage
+     */
     private void saveFileAs(MyImage myImage) {
         try {
             String destinationFile = this.folderToSave != null ? this.folderToSave.getPath() + "/" + myImage.getFileName() : String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads") + "/" + myImage.getFileName());
@@ -250,14 +273,16 @@ public class ImagesApp extends Application {
 
             while ((length = is.read(b)) != -1) {
                 bos.write(b, 0, length);
-            }
-
-            is.close();
+            } is.close();
         } catch (IOException e) {
             System.out.println(e);
         }
     }
 
+    /**
+     * @param path
+     * @param desc
+     */
     public void createNewAlertWithImageDescr(String path, String desc) {
         try {
             Image image = new Image(new FileInputStream(path));
@@ -275,12 +300,10 @@ public class ImagesApp extends Application {
             imageView.setFitHeight(455);
             imageView.setFitWidth(500);
 
-
             // Items
             ScrollPane sp = new ScrollPane();
             Label secondLabel = new Label(desc);
             StackPane secondaryLayout = new StackPane();
-
 
             secondaryLayout.getChildren().add(secondLabel);
 
@@ -295,7 +318,9 @@ public class ImagesApp extends Application {
 
             colorPicker.setOnAction(new EventHandler() {
 
-
+                /**
+                 * @param t
+                 */
                 public void handle(Event t) {
                     Color c = colorPicker.getValue();
                     imageView.setEffect(filterColor(c));
@@ -305,11 +330,10 @@ public class ImagesApp extends Application {
             colorPicker.setLayoutX(600);
             colorPicker.setLayoutY(600);
 
-
             saveImage.setLayoutX(600);
             saveImage.setLayoutY(720);
 
-
+            // Open new window with the pictures folder
             saveImage.setOnAction(e -> {
                 File choosedFolder = chooseSpecificFolder(newWindow);
                 this.setFolderToSave(choosedFolder);
@@ -318,7 +342,7 @@ public class ImagesApp extends Application {
 
                 String imageViewPath = this.folderToSave != null ? this.folderToSave.getPath() + "/" : String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads") + "/");
 
-
+                // Save the buffered image
                 BufferedImage bfImage = null;
                 try {
                     bfImage = colorFilterImage != null ? createColorBufferImage(imageViewToBufferedImage(imageView), colorFilterImage.hashCode()) :
@@ -328,9 +352,7 @@ public class ImagesApp extends Application {
                 } catch (IOException exception) {
                     System.out.println("Can't save image");
                 }
-
             });
-
 
             //Creating a scene object
             Scene scene = new Scene(sp, 800, 800);
@@ -342,6 +364,7 @@ public class ImagesApp extends Application {
             newWindow.setScene(scene);
             root.getChildren().add(colorPicker);
             root.getChildren().addAll(saveImage);
+
             //Displaying the contents of the stage
             newWindow.show();
         } catch (IOException e) {
@@ -349,7 +372,12 @@ public class ImagesApp extends Application {
         }
     }
 
-
+    /**
+     * @param primaryStage
+     *
+     * @return selectedDirectory
+     */
+    // Open a Finder Window, the user can select a folder with images
     public File chooseSpecificFolder(Stage primaryStage) {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle("Choose folder with JPG");
@@ -363,6 +391,11 @@ public class ImagesApp extends Application {
         this.colorFilterImage = colorFilterImage;
     }
 
+    /**
+     * @param bImage
+     * @param path
+     * @param desc
+     */
     public void writeBufferedImage(BufferedImage bImage, String path, String desc) {
         try {
             String newPath = path + desc + ".jpg";
@@ -370,9 +403,14 @@ public class ImagesApp extends Application {
         } catch (IOException e) {
             System.out.println(e);
         }
-
     }
 
+    /**
+     * @param originalImage
+     * @param mask
+     * @return
+     * @throws IOException
+     */
     private BufferedImage createColorBufferImage(BufferedImage originalImage, int mask) throws IOException {
         BufferedImage colorImage = new BufferedImage(originalImage.getWidth(),
                 originalImage.getHeight(), originalImage.getType());
@@ -387,13 +425,19 @@ public class ImagesApp extends Application {
         return colorImage;
     }
 
-
+    /**
+     * @param imageView
+     * @return
+     */
     public BufferedImage imageViewToBufferedImage(ImageView imageView) {
         BufferedImage backImg = SwingFXUtils.fromFXImage(imageView.getImage(), null);
         return backImg;
     }
 
-
+    /**
+     * @param color
+     * @return
+     */
     public Lighting filterColor(Color color) {
         Lighting lighting = new Lighting();
         lighting.setDiffuseConstant(1.0);
