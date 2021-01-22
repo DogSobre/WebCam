@@ -54,13 +54,16 @@ public class ImagesApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
+
         VBox vBox = new VBox();
         VBox rootVbow = new VBox();
+
+        // The root of the scene shown in the main window
         rootVbow.setLayoutX(50);
         rootVbow.setLayoutY(50);
-        // The root of the scene shown in the main window
-
         StackPane root = new StackPane();
+
+        // Set a default text if the variable is not initialized
         String textOnSleectedFolder = this.folderToSave != null ? FileUtils.readFileToString(this.folderToSave, "UTF-8") : "Save as";
 
         // Create a button with specified text
@@ -119,6 +122,7 @@ public class ImagesApp extends Application {
             imageChargedStage.show();
         });
 
+        // Open the window with the webcam recording
         loadWebCam.setOnAction(a -> {
             setTimeInS(timeInSTextField2.getText());
             WebcamCapture gs = new WebcamCapture(this.timeVideoInS, this.folderToSave != null ? this.folderToSave.getPath() : String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads")));
@@ -303,14 +307,16 @@ public class ImagesApp extends Application {
             imageView.setFitHeight(455);
             imageView.setFitWidth(500);
 
-            // Items
+            // Window scrollbar
             ScrollPane sp = new ScrollPane();
+
+            //
             Label secondLabel = new Label(desc);
             StackPane secondaryLayout = new StackPane();
 
             secondaryLayout.getChildren().add(secondLabel);
 
-            //Creating a Group object
+            //Creating a Group object to show the image
             Group root = new Group(imageView);
             root.getChildren().add(secondaryLayout);
 
@@ -323,6 +329,7 @@ public class ImagesApp extends Application {
 
                 /**
                  * @param t
+                 * Set the color of the filter with a color picker
                  */
                 public void handle(Event t) {
                     Color c = colorPicker.getValue();
@@ -336,7 +343,7 @@ public class ImagesApp extends Application {
             saveImage.setLayoutX(600);
             saveImage.setLayoutY(720);
 
-            // Open new window with the pictures folder
+            // Open new window with the folder to save the image
             saveImage.setOnAction(e -> {
                 File choosedFolder = chooseSpecificFolder(newWindow);
                 this.setFolderToSave(choosedFolder);
@@ -345,7 +352,7 @@ public class ImagesApp extends Application {
 
                 String imageViewPath = this.folderToSave != null ? this.folderToSave.getPath() + "/" : String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads") + "/");
 
-                // Save the buffered image
+                // Generate the buffered image when the filter is apply
                 BufferedImage bfImage = null;
                 try {
                     bfImage = colorFilterImage != null ? createColorBufferImage(imageViewToBufferedImage(imageView), colorFilterImage.hashCode()) :
@@ -365,6 +372,8 @@ public class ImagesApp extends Application {
 
             //Adding scene to the stage
             newWindow.setScene(scene);
+
+            // Add children element on the main window
             root.getChildren().add(colorPicker);
             root.getChildren().addAll(saveImage);
 
