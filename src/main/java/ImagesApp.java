@@ -188,7 +188,7 @@ public class ImagesApp extends Application {
 
     /**
      * @param folderToSave
-     * Select the
+     * Select the Folder path to save the image
      */
     public void setFolderToSave(File folderToSave) {
         this.folderToSave = folderToSave;
@@ -216,6 +216,7 @@ public class ImagesApp extends Application {
 
     /**
      * @param time
+     * Set the variable who's timing the pictures from the webcam
      */
     public void setTimeInS(String time) {
         Integer foo;
@@ -228,7 +229,7 @@ public class ImagesApp extends Application {
 
     /**
      * @param img
-     *
+     * Select the image to save in the file path
      */
     public void selecImageToSave(List<MyImage> img) {
         for (int i = 0; i < img.size(); i++) {
@@ -246,6 +247,7 @@ public class ImagesApp extends Application {
     /**
      * @param img
      * @param vBox
+     * Create all buttons for all loaded images
      */
     public void createButtonsByImage(List<MyImage> img, VBox vBox) {
         for (int i = 0; i < img.size(); i++) {
@@ -260,6 +262,7 @@ public class ImagesApp extends Application {
 
     /**
      * @param myImage
+     * Save the images in the user computer
      */
     public void saveFileAs(MyImage myImage) {
         try {
@@ -281,7 +284,7 @@ public class ImagesApp extends Application {
     /**
      * @param path
      * @param desc
-     *
+     * Load a window with selected image, with his title and percentage
      */
     public void createNewAlertWithImageDescr(String path, String desc) {
         try {
@@ -374,7 +377,7 @@ public class ImagesApp extends Application {
 
     /**
      * @param primaryStage
-     *
+     * At the "load image", open a finder to search a folder with images
      * @return selectedDirectory
      */
     // Open a Finder Window, the user can select a folder with images
@@ -395,7 +398,6 @@ public class ImagesApp extends Application {
      * @param bImage
      * @param path
      * @param desc
-     *
      */
     public void writeBufferedImage(BufferedImage bImage, String path, String desc) {
         try {
@@ -409,7 +411,7 @@ public class ImagesApp extends Application {
     /**
      * @param originalImage
      * @param mask
-     * Create a filter in front of the picture
+     * When a filter is apply, generate a buffer with the applied filter
      * @return
      * @throws IOException
      */
