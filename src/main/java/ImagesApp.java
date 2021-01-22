@@ -261,19 +261,18 @@ public class ImagesApp extends Application {
     /**
      * @param myImage
      */
-    private void saveFileAs(MyImage myImage) {
+    public void saveFileAs(MyImage myImage) {
         try {
-            String destinationFile = this.folderToSave != null ? this.folderToSave.getPath() + "/" + myImage.getFileName() : String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads") + "/" + myImage.getFileName());
-            URL url = new URL(myImage.getFilePath());
-            InputStream is = url.openStream();
-            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(destinationFile)));
-
-            byte[] b = new byte[2048];
-            int length;
-
-            while ((length = is.read(b)) != -1) {
-                bos.write(b, 0, length);
-            } is.close();
+            String filePath = this.folderToSave != null ? this.folderToSave.getPath() + "/" + myImage.getFileName() : String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads") + "/" + myImage.getFileName());
+            filePath = filePath.replaceAll("\\s+", "");
+            BufferedImage bImage = ImageIO.read(new File(myImage.getFilePath()));
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ImageIO.write(bImage, "jpg", bos);
+            byte[] data = bos.toByteArray();
+            ByteArrayInputStream bis = new ByteArrayInputStream(data);
+            BufferedImage bImage2 = ImageIO.read(bis);
+            ImageIO.write(bImage2, "jpg", new File(filePath));
+            System.out.println("image " + myImage.getFileName() + " created as :" + filePath);
         } catch (IOException e) {
             System.out.println(e);
         }
@@ -396,7 +395,7 @@ public class ImagesApp extends Application {
      * @param bImage
      * @param path
      * @param desc
-     * 
+     *
      */
     public void writeBufferedImage(BufferedImage bImage, String path, String desc) {
         try {
