@@ -1,13 +1,19 @@
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
@@ -32,6 +38,8 @@ public class ImagesApp extends Application {
     private File folderToSave = null;
     //new File(String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads")) );
     private Integer timeVideoInS = 10;
+    final ColorPicker colorPicker = new ColorPicker();
+    private Color colorFilterImage = null;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -40,8 +48,10 @@ public class ImagesApp extends Application {
         rootVbow.setLayoutX(50);
         rootVbow.setLayoutY(50);
         // the root of the scene shown in the main window
+
         StackPane root = new StackPane();
         String textOnSleectedFolder = this.folderToSave != null ? FileUtils.readFileToString(this.folderToSave, "UTF-8") : "Save as";
+
         // create a button with specified text
         Button loadFoler = new Button("Load new folder images'");
         Button loadWebCam = new Button("Load with webcam'");
@@ -152,7 +162,6 @@ public class ImagesApp extends Application {
     }
 
     public void setFolderToSave(File folderToSave) {
-        System.out.println(folderToSave);
         this.folderToSave = folderToSave;
     }
 
@@ -161,14 +170,16 @@ public class ImagesApp extends Application {
         List<MyImage> myImages = new ArrayList<>();
         for (int i = 0; i < listOfFiles.length; i++) {
 
-            if (listOfFiles[i].isFile()) {
-                MyImage myImage = new MyImage(folder + "/", listOfFiles[i].getName());
+            if (listOfFiles[i].getName().contains(".jpg"))
 
-                myImages.add(myImage);
+                if (listOfFiles[i].isFile()) {
+                    MyImage myImage = new MyImage(folder + "/", listOfFiles[i].getName());
 
-            } else if (listOfFiles[i].isDirectory()) {
-                System.out.println("Directory " + listOfFiles[i].getName());
-            }
+                    myImages.add(myImage);
+
+                } else if (listOfFiles[i].isDirectory()) {
+                    System.out.println("Directory " + listOfFiles[i].getName());
+                }
 
         }
         return myImages;
@@ -251,6 +262,11 @@ public class ImagesApp extends Application {
         try {
             Image image = new Image(new FileInputStream(path));
             ImageView imageView = new ImageView(image);
+
+            String textOnSleectedFolder = this.folderToSave != null ? FileUtils.readFileToString(this.folderToSave, "UTF-8") : "Save as";
+
+            Button saveImage = new Button("Save");
+
             //Setting the position of the image
             imageView.setX(50);
             imageView.setY(25);
@@ -260,7 +276,7 @@ public class ImagesApp extends Application {
             imageView.setFitWidth(500);
 
 
-// Items
+            // Items
             ScrollPane sp = new ScrollPane();
             Label secondLabel = new Label(desc);
             StackPane secondaryLayout = new StackPane();
@@ -277,6 +293,44 @@ public class ImagesApp extends Application {
             // New window (Stage)
             Stage newWindow = new Stage();
 
+            colorPicker.setOnAction(new EventHandler() {
+
+
+                public void handle(Event t) {
+                    Color c = colorPicker.getValue();
+                    imageView.setEffect(filterColor(c));
+                    colorFilterImage = c;
+                }
+            });
+            colorPicker.setLayoutX(600);
+            colorPicker.setLayoutY(600);
+
+
+            saveImage.setLayoutX(600);
+            saveImage.setLayoutY(720);
+
+
+            saveImage.setOnAction(e -> {
+                File choosedFolder = chooseSpecificFolder(newWindow);
+                this.setFolderToSave(choosedFolder);
+                saveImage.setText(choosedFolder.getPath());
+                String fileNameUse = desc.split("\\s+")[0];
+
+                String imageViewPath = this.folderToSave != null ? this.folderToSave.getPath() + "/" : String.valueOf(Paths.get(System.getProperty("user.home"), "Downloads") + "/");
+
+
+                BufferedImage bfImage = null;
+                try {
+                    bfImage = colorFilterImage != null ? createColorBufferImage(imageViewToBufferedImage(imageView), colorFilterImage.hashCode()) :
+                            imageViewToBufferedImage(imageView);
+                    writeBufferedImage(bfImage, imageViewPath, fileNameUse);
+                    System.out.println("Image save as" + imageViewPath);
+                } catch (IOException exception) {
+                    System.out.println("Can't save image");
+                }
+
+            });
+
 
             //Creating a scene object
             Scene scene = new Scene(sp, 800, 800);
@@ -286,7 +340,8 @@ public class ImagesApp extends Application {
 
             //Adding scene to the stage
             newWindow.setScene(scene);
-
+            root.getChildren().add(colorPicker);
+            root.getChildren().addAll(saveImage);
             //Displaying the contents of the stage
             newWindow.show();
         } catch (IOException e) {
@@ -302,5 +357,50 @@ public class ImagesApp extends Application {
         chooser.setInitialDirectory(defaultDirectory);
         File selectedDirectory = chooser.showDialog(primaryStage);
         return selectedDirectory;
+    }
+
+    public void setColorFilterImage(Color colorFilterImage) {
+        this.colorFilterImage = colorFilterImage;
+    }
+
+    public void writeBufferedImage(BufferedImage bImage, String path, String desc) {
+        try {
+            String newPath = path + desc + ".jpg";
+            ImageIO.write(bImage, "jpg", new File(newPath));
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+    }
+
+    private BufferedImage createColorBufferImage(BufferedImage originalImage, int mask) throws IOException {
+        BufferedImage colorImage = new BufferedImage(originalImage.getWidth(),
+                originalImage.getHeight(), originalImage.getType());
+
+        for (int x = 0; x < originalImage.getWidth(); x++) {
+            for (int y = 0; y < originalImage.getHeight(); y++) {
+                int pixel = originalImage.getRGB(x, y) & mask;
+                colorImage.setRGB(x, y, pixel);
+            }
+        }
+
+        return colorImage;
+    }
+
+
+    public BufferedImage imageViewToBufferedImage(ImageView imageView) {
+        BufferedImage backImg = SwingFXUtils.fromFXImage(imageView.getImage(), null);
+        return backImg;
+    }
+
+
+    public Lighting filterColor(Color color) {
+        Lighting lighting = new Lighting();
+        lighting.setDiffuseConstant(1.0);
+        lighting.setSpecularConstant(0.0);
+        lighting.setSpecularExponent(0.0);
+        lighting.setSurfaceScale(0.0);
+        lighting.setLight(new Light.Distant(45, 45, color));
+        return lighting;
     }
 }
